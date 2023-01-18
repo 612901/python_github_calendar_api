@@ -9,11 +9,11 @@ def list_split(items, n):
 def getdata(name):
     gitpage = requests.get("https://github.com/" + name)
     data = gitpage.text
-    datacountreg = re.compile(r"data-content='(.*?)个贡献：")
-    datadatereg = re.compile(r"个贡献：(.*?)'")
+    datadatereg = re.compile(r'data-date="(.*?)" data-level')
+    datacountreg = re.compile(r'rx="2" ry="2">(.*?) contribution')
     datadate = datadatereg.findall(data)
     datacount = datacountreg.findall(data)
-    datacount = list(map(int, datacount))
+    datacount = list(map(int, [0 if i == "No" else i for i in datacount]))
     contributions = sum(datacount)
     datalist = []
     for index, item in enumerate(datadate):
@@ -36,5 +36,3 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(data).encode('utf-8'))
         return
-
-print(getdata('612901'))
